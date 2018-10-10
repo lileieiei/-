@@ -1,0 +1,97 @@
+#encoding:utf-8
+import requests
+import json
+from openpyxl import Workbook
+
+
+namedict={"110000":"北京市" , "120000":"天津" , "130000":"河北" , "140000":"山西" , "150000":"内蒙古" , "210000":"辽宁" , "220000":"吉林" , "230000":"黑龙江省" , "310000":"上海市" , "320000":"江苏省" , "330000":"浙江省" , "340000":"安徽省" , "350000":"福建省" , "360000":"江西省" , "370000":"山东省" , "410000":"河南省" , "420000":"湖北省" , "430000":"湖南省" , "440000":"广东省" , "450000":"广西壮族自治区" , "460000":"海南省" , "500000":"重庆市" , "510000":"四川省" , "520000":"贵州省" , "530000":"云南省" , "540000":"西藏自治区" , "610000":"陕西省" , "620000":"甘肃省" , "630000":"青海省" , "640000":"宁夏回族自治区" , "650000":"新疆维吾尔自治区" ,}
+yeardict={"2012":2,"2013":3,"2014":4,"2015":5,"2016":6}
+columndict={"A080101":2,"A080201":3,"A080102":4,"A08010J":5}
+wb=Workbook()
+url=['http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=sj&colcode=zb&wds=[{"wdcode":"reg","valuecode":"110000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0801"}]&k1=1538073597933',
+'http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=sj&colcode=zb&wds=[{"wdcode":"reg","valuecode":"120000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0801"}]&k1=1538073597933',
+'http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=sj&colcode=zb&wds=[{"wdcode":"reg","valuecode":"130000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0801"}]&k1=1538073597933',
+'http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=sj&colcode=zb&wds=[{"wdcode":"reg","valuecode":"140000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0801"}]&k1=1538073597933',
+'http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=sj&colcode=zb&wds=[{"wdcode":"reg","valuecode":"150000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0801"}]&k1=1538073597933',
+'http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=sj&colcode=zb&wds=[{"wdcode":"reg","valuecode":"210000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0801"}]&k1=1538073597933',
+'http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=sj&colcode=zb&wds=[{"wdcode":"reg","valuecode":"220000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0801"}]&k1=1538073597933',
+'http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=sj&colcode=zb&wds=[{"wdcode":"reg","valuecode":"230000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0801"}]&k1=1538073597933',
+'http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=sj&colcode=zb&wds=[{"wdcode":"reg","valuecode":"310000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0801"}]&k1=1538073597933',
+'http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=sj&colcode=zb&wds=[{"wdcode":"reg","valuecode":"320000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0801"}]&k1=1538073597933',
+'http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=sj&colcode=zb&wds=[{"wdcode":"reg","valuecode":"330000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0801"}]&k1=1538073597933',
+'http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=sj&colcode=zb&wds=[{"wdcode":"reg","valuecode":"340000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0801"}]&k1=1538073597933',
+'http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=sj&colcode=zb&wds=[{"wdcode":"reg","valuecode":"350000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0801"}]&k1=1538073597933',
+'http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=sj&colcode=zb&wds=[{"wdcode":"reg","valuecode":"360000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0801"}]&k1=1538073597933',
+'http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=sj&colcode=zb&wds=[{"wdcode":"reg","valuecode":"370000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0801"}]&k1=1538073597933',
+'http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=sj&colcode=zb&wds=[{"wdcode":"reg","valuecode":"410000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0801"}]&k1=1538073597933',
+'http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=sj&colcode=zb&wds=[{"wdcode":"reg","valuecode":"420000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0801"}]&k1=1538073597933',
+'http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=sj&colcode=zb&wds=[{"wdcode":"reg","valuecode":"430000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0801"}]&k1=1538073597933',
+'http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=sj&colcode=zb&wds=[{"wdcode":"reg","valuecode":"440000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0801"}]&k1=1538073597933',
+'http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=sj&colcode=zb&wds=[{"wdcode":"reg","valuecode":"450000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0801"}]&k1=1538073597933',
+'http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=sj&colcode=zb&wds=[{"wdcode":"reg","valuecode":"460000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0801"}]&k1=1538073597933',
+'http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=sj&colcode=zb&wds=[{"wdcode":"reg","valuecode":"500000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0801"}]&k1=1538073597933',
+'http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=sj&colcode=zb&wds=[{"wdcode":"reg","valuecode":"510000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0801"}]&k1=1538073597933',
+'http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=sj&colcode=zb&wds=[{"wdcode":"reg","valuecode":"520000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0801"}]&k1=1538073597933',
+'http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=sj&colcode=zb&wds=[{"wdcode":"reg","valuecode":"530000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0801"}]&k1=1538073597933',
+'http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=sj&colcode=zb&wds=[{"wdcode":"reg","valuecode":"540000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0801"}]&k1=1538073597933',
+'http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=sj&colcode=zb&wds=[{"wdcode":"reg","valuecode":"610000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0801"}]&k1=1538073597933',
+'http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=sj&colcode=zb&wds=[{"wdcode":"reg","valuecode":"620000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0801"}]&k1=1538073597933',
+'http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=sj&colcode=zb&wds=[{"wdcode":"reg","valuecode":"630000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0801"}]&k1=1538073597933',
+'http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=sj&colcode=zb&wds=[{"wdcode":"reg","valuecode":"640000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0801"}]&k1=1538073597933',
+'http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=sj&colcode=zb&wds=[{"wdcode":"reg","valuecode":"650000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0801"}]&k1=1538073597933',
+
+
+'http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=zb&colcode=sj&wds=[{"wdcode":"reg","valuecode":"110000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0802"}]&k1=1538334735316','http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=zb&colcode=sj&wds=[{"wdcode":"reg","valuecode":"120000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0802"}]&k1=1538334735316','http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=zb&colcode=sj&wds=[{"wdcode":"reg","valuecode":"130000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0802"}]&k1=1538334735316','http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=zb&colcode=sj&wds=[{"wdcode":"reg","valuecode":"140000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0802"}]&k1=1538334735316','http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=zb&colcode=sj&wds=[{"wdcode":"reg","valuecode":"150000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0802"}]&k1=1538334735316','http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=zb&colcode=sj&wds=[{"wdcode":"reg","valuecode":"210000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0802"}]&k1=1538334735316','http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=zb&colcode=sj&wds=[{"wdcode":"reg","valuecode":"220000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0802"}]&k1=1538334735316','http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=zb&colcode=sj&wds=[{"wdcode":"reg","valuecode":"230000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0802"}]&k1=1538334735316','http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=zb&colcode=sj&wds=[{"wdcode":"reg","valuecode":"310000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0802"}]&k1=1538334735316','http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=zb&colcode=sj&wds=[{"wdcode":"reg","valuecode":"320000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0802"}]&k1=1538334735316','http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=zb&colcode=sj&wds=[{"wdcode":"reg","valuecode":"330000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0802"}]&k1=1538334735316','http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=zb&colcode=sj&wds=[{"wdcode":"reg","valuecode":"340000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0802"}]&k1=1538334735316','http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=zb&colcode=sj&wds=[{"wdcode":"reg","valuecode":"350000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0802"}]&k1=1538334735316','http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=zb&colcode=sj&wds=[{"wdcode":"reg","valuecode":"360000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0802"}]&k1=1538334735316','http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=zb&colcode=sj&wds=[{"wdcode":"reg","valuecode":"370000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0802"}]&k1=1538334735316','http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=zb&colcode=sj&wds=[{"wdcode":"reg","valuecode":"410000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0802"}]&k1=1538334735316','http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=zb&colcode=sj&wds=[{"wdcode":"reg","valuecode":"420000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0802"}]&k1=1538334735316','http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=zb&colcode=sj&wds=[{"wdcode":"reg","valuecode":"430000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0802"}]&k1=1538334735316','http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=zb&colcode=sj&wds=[{"wdcode":"reg","valuecode":"440000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0802"}]&k1=1538334735316','http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=zb&colcode=sj&wds=[{"wdcode":"reg","valuecode":"450000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0802"}]&k1=1538334735316','http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=zb&colcode=sj&wds=[{"wdcode":"reg","valuecode":"460000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0802"}]&k1=1538334735316','http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=zb&colcode=sj&wds=[{"wdcode":"reg","valuecode":"500000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0802"}]&k1=1538334735316','http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=zb&colcode=sj&wds=[{"wdcode":"reg","valuecode":"510000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0802"}]&k1=1538334735316','http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=zb&colcode=sj&wds=[{"wdcode":"reg","valuecode":"520000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0802"}]&k1=1538334735316','http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=zb&colcode=sj&wds=[{"wdcode":"reg","valuecode":"530000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0802"}]&k1=1538334735316','http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=zb&colcode=sj&wds=[{"wdcode":"reg","valuecode":"540000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0802"}]&k1=1538334735316','http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=zb&colcode=sj&wds=[{"wdcode":"reg","valuecode":"610000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0802"}]&k1=1538334735316','http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=zb&colcode=sj&wds=[{"wdcode":"reg","valuecode":"620000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0802"}]&k1=1538334735316','http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=zb&colcode=sj&wds=[{"wdcode":"reg","valuecode":"630000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0802"}]&k1=1538334735316','http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=zb&colcode=sj&wds=[{"wdcode":"reg","valuecode":"640000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0802"}]&k1=1538334735316','http://data.stats.gov.cn/easyquery.htm?m=QueryData&dbcode=fsnd&rowcode=zb&colcode=sj&wds=[{"wdcode":"reg","valuecode":"650000"}]&dfwds=[{"wdcode":"zb","valuecode":"A0802"}]&k1=1538334735316',
+]
+condition=["A080101","A080102","A08010J","A080201"]
+
+'''getcontent 获取数据，最后输出列表形式的结果
+   parse 处理数据，将有用的数据提取出来放到一个列表里,condition表示筛选条件组成的字典
+'''
+def getcontent(url):
+    content=requests.get(url).content
+    data=json.loads(content)
+    return data["returndata"]["datanodes"]    
+
+def parse(data,condition):
+    last=[]
+    for every in data:
+        everycontent=[]
+        
+        if every["wds"][0]["valuecode"] in condition and int(every["wds"][2]["valuecode"])>2012:
+            
+            everycontent.append([every["data"]["data"],every["wds"][0]["valuecode"],every["wds"][1]["valuecode"],every["wds"][2]["valuecode"]])
+        
+            last.append(everycontent)
+    return last
+answer=[]
+i=0
+for html in url:
+    data=getcontent(html)
+    lastdata=parse(data,condition)
+    answer.append(lastdata)
+    if namedict[lastdata[0][0][2]] in wb.sheetnames:
+        sheet=wb.get_sheet_by_name(namedict[lastdata[0][0][2]])
+    else:
+        sheet=wb.create_sheet(namedict[lastdata[0][0][2]])
+    
+    sheet['A1']="year"
+    sheet['B1']="一般预算收入"
+    sheet['C1']="预算支出"
+    sheet['D1']="税收收入"
+    sheet['E1']="非税收收入"
+    
+    for j in lastdata:
+        
+        sheet.cell(row=yeardict[j[0][3]],column=columndict[j[0][1]],value=j[0][0])
+        print(j)
+    
+wb.save(r"C:\Users\Administrator\Desktop\mission\中央与地方财政关系\图表汇总（2018.9）\result.xlsx")
+        
+        
+        
+        
+        
+        
+        
+        
